@@ -1,16 +1,25 @@
 /**
  * Created by jinyangyu on 4/19/17.
  */
-Survey.defaultBootstrapCss.navigationButton = "btn btn-primary";
+var surveyJSON = { title: "Tell us, what technologies do you use?", pages: [
+    { name:"page1", questions: [
+        { type: "radiogroup", choices: [ "Yes", "No" ], isRequired: true, name: "frameworkUsing",title: "Do you use any front-end framework like Bootstrap?" },
+        { type: "checkbox", choices: ["Bootstrap","Foundation"], hasOther: true, isRequired: true, name: "framework", title: "What front-end framework do you use?", visibleIf: "{frameworkUsing} = 'Yes'" }
+    ]},
+    { name: "page2", questions: [
+        { type: "radiogroup", choices: ["Yes","No"],isRequired: true, name: "mvvmUsing", title: "Do you use any MVVM framework?" },
+        { type: "checkbox", choices: [ "AngularJS", "KnockoutJS", "React" ], hasOther: true, isRequired: true, name: "mvvm", title: "What MVVM framework do you use?", visibleIf: "{mvvmUsing} = 'Yes'" } ] },
+    { name: "page3",questions: [
+        { type: "comment", name: "about", title: "Please tell us about your main requirements for Survey library" } ] }
+]
+};
 Survey.Survey.cssType = "bootstrap";
-var survey = new Survey.Model({questions:[
-    { type: "rating", name: "satisfaction", title: "How satisfied are you with the Product?",
-        mininumRateDescription: "Not Satisfied", maximumRateDescription: "Completely satisfied" }]
+var survey = new Survey.Model(surveyJSON);
+$("#surveyContainer").Survey({
+    model:survey,
+    onComplete:sendDataToServer
 });
-
-$("#surveyElement").Survey({model:survey});
-var q = survey.getQuestionByName('satisfaction');
-q.mininumRateDescription = 0;
-q.maximumRateDescription = 5;
-survey.render();
-
+function sendDataToServer(survey) {
+    var resultAsString = JSON.stringify(survey.data);
+    alert(resultAsString); //send Ajax request to your web server.
+};
