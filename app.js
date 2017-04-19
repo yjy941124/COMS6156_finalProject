@@ -14,7 +14,6 @@ var util = require('./util');
 app.set('views', './views');  // Specify the folder to find templates
 app.set('view engine', 'ejs');    // Set the template engine
 app.get('/', router.home);
-
 var port = process.env.PORT || 8880;
 
 app.listen(port, function () {
