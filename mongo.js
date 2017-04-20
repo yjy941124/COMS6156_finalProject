@@ -26,3 +26,38 @@ exports.insertNewPlatform = function (platformName) {
         });
     })
 };
+exports.insertFeedbacktoFeedbacks = function (feedback, feedbackID) {
+    return MongoClient.connect(mongodbUrl).then(function (db) {
+        var feedbacks = db.collection('Feedbacks');
+        feedbacks.insertOne({
+            id : feedbackID,
+            name : feedback.name,
+            MLknowledge : feedback.MLknowledge
+        });
+    })
+};
+exports.queryFeedbackFromFeedbacks = function (feedbackID) {
+    return MongoClient.connect(mongodbUrl).then(function (db) {
+        var feedbacks = db.collection('Feedbacks');
+        return feedbacks.findOne({
+            'id' : feedbackID
+        });
+    })
+};
+
+/*
+users.findOneAndUpdate(
+    {'_id': new ObjectId(user_id)},
+    {
+        $pull: {
+            subscriptions: {
+                bookId: book_id
+            }
+        }
+    },
+    {upsert: true})
+    .then(function () {
+        db.close();
+    }).then(function () {
+    res.redirect('/books/' + book_id);
+});*/

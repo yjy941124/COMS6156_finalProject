@@ -78,8 +78,32 @@ var q = survey.getQuestionByName('visualization');
 q.rateValues = [1,2,3];
 survey.render();
 
+function makeid() {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
+    for (var i = 0; i < 15; i++) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    return text;
+}
 function sendDataToServer(survey) {
+
     var resultAsString = JSON.stringify(survey.data);
+
     alert(resultAsString); //send Ajax request to your web server.
-};
+
+    var uniqueID = makeid();
+    $.ajax({
+        type: 'POST',
+        url: '/input/'+uniqueID,
+        data: resultAsString, // or JSON.stringify ({name: 'jonas'}),
+        success: function(data) {
+        }, error: function (data) {
+            console.log(data);
+        },
+        contentType: "application/json",
+        dataType: 'json'
+    });
+
+}

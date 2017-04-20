@@ -31,5 +31,22 @@ app.post('/registerNewPlatform', function (req, res) {
 app.listen(port, function () {
     console.log(port);
 });
+app.post('/input/:inputID', function (req, res) {
+    console.log('here');
+    var feedback = req.body;
+    var feedbackID = req.params.inputID;
+    mongodb.insertFeedbacktoFeedbacks(feedback, feedbackID).then(function () {
+        res.send('done');
+    });
+});
 
+app.get('/input/:inputID', function (req, res) {
+    var feedbackID = req.params.inputID;
+    mongodb.queryFeedbackFromFeedbacks(feedbackID).then(function (item) {
+
+        res.render('feedback',{
+            feedback : item
+        })
+    })
+});
 
