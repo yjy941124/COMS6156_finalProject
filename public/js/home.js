@@ -92,11 +92,9 @@ $("#surveyContainer").Survey({
     model: survey,
     onComplete: makeRecommendation
 });
-
 var q = survey.getQuestionByName('Tune');
 q.rateValues = [1, 2, 3];
 survey.render();
-
 var q = survey.getQuestionByName('runTime');
 q.rateValues = [1, 2, 3];
 survey.render();
@@ -130,6 +128,9 @@ function makeRecommendation(survey) {
     var accuracys = [];
     var algs = [];
     var evaluation = [];
+    var speedscores = [];
+    var accuracyscores = [];
+    var totalscores = [];
     for (var i = 0; i < platforms.length; i++) {
         var MLknowledgeAvg = (platforms[i].MLknowledge).map(Number).reduce(function (a, b) {
                 return a + b;
@@ -167,17 +168,20 @@ function makeRecommendation(survey) {
         var score = 0;
 
         score = MLKnowledgeScore(surveyAnswer.MLKnowledge, TuneAvg, MLknowledgeAvg, parseInt(surveyAnswer.Tune)) +
-                speedScore(speedAvg, parseInt(surveyAnswer.runTime)) +
-                accuracyScore(accuracyAvg, parseInt(surveyAnswer.accuracy)) +
                 videoScore(videoAvg, parseInt(surveyAnswer.video)) +
                 documentScore(documentAvg, parseInt(surveyAnswer.document)) +
                 UIScore(UIAvg, parseInt(surveyAnswer.UI)) +
                 visualizationScore(visualizationAvg, parseInt(surveyAnswer.visualization));
-        console.log('total score of ' +platforms[i].name +' is ' + score);
+
+        totalscores.push(score);
+
+        speedscores.push(speedScore(speedAvg, parseInt(surveyAnswer.runTime)));
+        console.log('updating speedscores');
+        console.log(speedscores);
+        accuracyscores.push(accuracyScore(accuracyAvg, parseInt(surveyAnswer.accuracy)));
         var runtime = surveyAnswer.dataSize / speedAvg;
         var satisfyAlg;
-        console.log(surveyAnswer.alg);
-        console.log(platforms[i].alg.length);
+
         if (surveyAnswer.alg == "both" && platforms[i].alg.length == 2) {
             satisfyAlg = true;
         } else if (surveyAnswer.alg == "classification" && platforms[i].alg.includes("classification")) {
@@ -188,20 +192,72 @@ function makeRecommendation(survey) {
             satisfyAlg = false;
         }
         var evaluationSinglePlatform = {
+            name : platforms[i].name,
             score : score,
             satisfyAlg : satisfyAlg,
-            runtime : runtime
+            runtime : runtime,
+            MLKnowledge : MLknowledgeAvg,
+            speed : speedAvg,
+            accuracy : accuracyAvg,
+            video : videoAvg,
+            document : documentAvg,
+            UI : UIAvg,
+            visualization : visualizationAvg
         };
 
         evaluation.push(evaluationSinglePlatform);
 
     }
-    console.log(evaluation[0]);
-    console.log(evaluation[1]);
-    console.log(evaluation[2]);
 
+    var evaluationContent = "";
+    var data = [];
+    var maxScoreIdx = -1;
+    var maxScore = -1;
+    for (var i = 0; i < evaluation.length; i++) {
+        evaluation[i].speed = surveyAnswer.runTime * evaluation[i].speed / Math.max.apply(Math, speedscores) * 3;
+        evaluation[i].accuracy = surveyAnswer.accuracy * evaluation[i].accuracy / Math.max.apply(Math, accuracyscores) * 3;
+        evaluation[i].score = evaluation[i].score + evaluation[i].accuracy * surveyAnswer.runTime+ evaluation[i].speed * surveyAnswer.accuracy;
+        var singlePlatform = {
+            x :['ML skill required','speed','accuracy','video tutorial','documentation','UI','data visualization'],
+            y :[evaluation[i].MLKnowledge, evaluation[i].speed, evaluation[i].accuracy,
+                evaluation[i].video, evaluation[i].document, evaluation[i].UI, evaluation[i].visualization],
+            name : evaluation[i].name,
+            type :'bar'
+        };
+        if (!evaluation[i].satisfyAlg) {
+            evaluation[i].score = 0;
+        }
+        if (maxScore < evaluation[i].score) {
+            maxScore = evaluation[i].score;
+            maxScoreIdx = i;
+        }
+        data.push(singlePlatform);
+    }
+    var layout = {barmode: 'group'};
+    Plotly.newPlot('bar-plot', data, layout);
 
+    evaluationContent += "<p>Based on your survey, we recommend you to use : <strong>" + evaluation[maxScoreIdx].name +
+            "</strong> Platform.";
+
+    evaluationContent += "<p>We also estimated the time this platform will approximately take you "
+        + (Math.round(surveyAnswer.dataSize / evaluation[maxScoreIdx].speed)).toString() + " Seconds to run your experiment." +
+        " This estimate is based on the datasize you provided in the survey and our historical records of this platform.</p>";
+    evaluationContent += "<p>We are unable to estimate the cost of your experiment. But the cost table should be generally" +
+            "easy to access at the platform's website.</p>";
+    evaluationContent += "<p>We also provide a bar graph of all different perspectives we considered during" +
+        " the recommendation. You can view it below. This bar graph is generated by taking average on all of the" +
+        "community feedback we have received so far. If you would like to submit your own feedback and " +
+        "to help us improve, please click <a href='/input'>Here</a>. Any feedback is appreciated.</p>";
+    for (var i = 0; i <evaluation.length; i++) {
+        if (!evaluation[i].satisfyAlg) {
+            evaluationContent += "<p>Note, even though the performance of <strong>" + evaluation[i].name + " </strong>might" +
+                " be higher than our recommended platform, it does not fit your requirement because it " +
+                "does not have the " + surveyAnswer.alg + " algorithm you selected in the survey.</p>"
+        }
+    }
+    $('#evaluation').html(evaluationContent);
 }
+
 function MLKnowledgeScore(knowML, tune, MLKnowedge, weight) {
     var MLscore = 0;
     var blackboxWeight = 3;
@@ -238,7 +294,6 @@ function speedScore(speed, weight) {
 function accuracyScore(accuracy, weight) {
     return accuracy * weight;
 }
-
 $(document).ready(function () {
 
     $.ajax({

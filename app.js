@@ -59,3 +59,7 @@ app.get('/platforms', function (req, res) {
         res.send(item);
     })
 });
+
+app.get('/recommendation', function (req, res) {
+    res.render('recommendation');
+})
