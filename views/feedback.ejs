@@ -1,3 +1,66 @@
 <div>
-    <%=JSON.stringify(feedback)%>
+    <!--<%=JSON.stringify(feedback)%>-->
+    <div class="table-title">
+        <h3>User Feedback</h3>
+    </div>
+    <table class="table-fill">
+        <thead>
+        <tr>
+            <th class="text-left">Aspect</th>
+            <th class="text-left">User Input</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>Name</td>
+            <td><%=feedback.name%></td>
+        </tr>
+        <tr>
+            <td>MLknowledge</td>
+            <td><%=feedback.MLknowledge%></td>
+        </tr>
+        <tr>
+            <td>Tune</td>
+            <td><%=feedback.Tune%></td>
+        </tr>
+        <tr>
+            <td>video</td>
+            <td><%=feedback.video%></td>
+        </tr>
+        <tr>
+            <td>documentation</td>
+            <td><%=feedback.document%></td>
+        </tr>
+        <tr>
+            <td>User Interface</td>
+            <td><%=feedback.UI%></td>
+        </tr>
+        <tr>
+            <td>visualization</td>
+            <td><%=feedback.visualization%></td>
+        </tr>
+        <tr>
+            <td>speed</td>
+            <td><%=feedback.speed%></td>
+        </tr>
+        <tr>
+            <td>accuracy</td>
+            <td><%=feedback.accuracy%></td>
+        </tr>
+        <tr>
+            <td>alg</td>
+            <td><%=feedback.alg%></td>
+        </tr>
+        <tr>
+            <td><button style="text-align: center" class="btn btn-primary btn-lg" onclick="approve(<%=JSON.stringify(feedback)%>)">Approve</button></td>
+            <td><button style="text-align: center" class="btn btn-primary btn-lg" onclick="disapprove()">Disapprove</button></td>
+        </tr>
+
+        </tbody>
+    </table>
+
+
+
+
 </div>
+<script type="text/javascript" src="/public/js/feedback.js"></script>

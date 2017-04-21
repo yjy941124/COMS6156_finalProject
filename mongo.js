@@ -29,10 +29,20 @@ exports.insertNewPlatform = function (platformName) {
 exports.insertFeedbacktoFeedbacks = function (feedback, feedbackID) {
     return MongoClient.connect(mongodbUrl).then(function (db) {
         var feedbacks = db.collection('Feedbacks');
+        var inputSpeed = feedback.datasize/feedback.runTime
+        console.log(inputSpeed);
         feedbacks.insertOne({
             id : feedbackID,
             name : feedback.name,
-            MLknowledge : feedback.MLknowledge
+            MLknowledge : feedback.MLknowledge,
+            Tune: feedback.Tune,
+            video: feedback.video,
+            document: feedback.document,
+            UI: feedback.UI,
+            visualization: feedback.visualization,
+            speed: inputSpeed,
+            accuracy:feedback.accuracy,
+            alg:feedback.alg
         });
     })
 };
@@ -44,6 +54,34 @@ exports.queryFeedbackFromFeedbacks = function (feedbackID) {
         });
     })
 };
+
+exports.queryPlatformUsingName = function (name) {
+    console.log("in queryPlatformUsing Name name: " + name);
+    return MongoClient.connect(mongodbUrl).then(function (db) {
+        var platforms = db.collection('Platforms');
+
+        platforms.findOne({
+            'name' : name
+        }).then(function (item) {
+            return item._id;
+        });
+    })
+};
+
+exports.insertPlatformFromFeedback = function (platformName) {
+    return MongoClient.connect(mongodbUrl).then(function (db) {
+        var platforms = db.collection('Platforms');
+        platforms.insertOne({
+            name : platformName
+        }).then(function () {
+
+        });
+    })
+};
+exports.updatePlatformUsingName = function () {
+    console.log("in update");
+
+}
 
 /*
 users.findOneAndUpdate(

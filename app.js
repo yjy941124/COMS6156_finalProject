@@ -29,13 +29,45 @@ app.get('/input', function (req, res) {
         })
     })
 });
+
 app.post('/registerNewPlatform', function (req, res) {
     console.log(req);
     res.send('done');
 });
-app.listen(port, function () {
-    console.log(port);
+
+// app.post('/approve', function (req, res) {
+//     // var feedbackID = req.params.inputID;
+//     console.log("approved");
+//     var feedbackID = req.body.feedbackID;
+//     console.log(feedbackID);
+//     mongodb.queryFeedbackFromFeedbacks(feedbackID).then(function (item) {
+//         var feedbackName = item.name;
+//         console.log(item);
+//         console.log(feedbackName);
+//         return {feedback:item, feedbackName:feedbackName};
+//     }).then(function(item){
+//         var platformFound = mongodb.queryPlatformUsingName(item.feedbackName);
+//     return {feedback:item.feedback, platformFound: platformFound}}
+//     ).then(function (item) {
+//         console.log("platformFound");
+//         console.log(item.platformFound);
+//         if (item.platformFound != null) {
+//             mongodb.updatePlatformUsingName();
+//         }
+//         else {
+//             console.log("insert new platform");
+//             console.log(item.feedback);
+//             mongodb.insertNewPlatform();
+//         }
+//     });
+//     res.render('approve');
+// });
+
+app.post('/approve', function (req, res) {
+    console.log(req.body);
+    console.log(mongodb.queryPlatformUsingName(req.body.name));
 });
+
 app.post('/input/:inputID', function (req, res) {
     console.log('here');
     var feedback = req.body;
@@ -48,9 +80,9 @@ app.post('/input/:inputID', function (req, res) {
 app.get('/input/:inputID', function (req, res) {
     var feedbackID = req.params.inputID;
     mongodb.queryFeedbackFromFeedbacks(feedbackID).then(function (item) {
-
         res.render('feedback',{
-            feedback : item
+            feedback : item,
+            feedbackID : feedbackID
         })
     })
 });

@@ -8,39 +8,51 @@ Survey.Survey.cssType = "bootstrap";
 var surveyJSON = { title: "Submit a new platform that you used!", pages: [
     { name:"page1", questions: [
         { type: "dropdown", name: "name", title: "What platform do you want to rate?", isRequired: true, colCount: 0,
-            choices: ["Amazon", "Microsoft", "BigML", "other"]}
+            choices: ["Amazon", "Microsoft", "BigML", "other"]
+        }
     ]},
     { name: "page2", questions: [
-        { type: "rating", isRequired: true, name: "MLknowledge",
-            title: "Does this platform require machine learning background to use?",
-            mininumRateDescription: "Do not need any background knowledge",
-            maximumRateDescription: "Need to understand Machine learning terms"},
-        { type: "rating", name: "Tune",
-            title: "How much flexibility to tune parameters this platform give?",
-            mininumRateDescription: "Cannot change parameters at all",
-            maximumRateDescription: "A lot of flexibility"},
-        { type: "rating", name: "video", title: "Please rate the video tutorial of this platform:",
-            mininumRateDescription: "No tutorial or only bad tutorials",
-            maximumRateDescription: "Great video tutorials"},
-        { type: "rating", name: "document", title: "Please rate the documentation of this platform",
-            mininumRateDescription: "No documentation or only bad documentation",
-            maximumRateDescription: "Great documentation"},
-        { type: "rating", name: "UI", title: "Please rate the user interface of this platform",
-            mininumRateDescription: "Hard to use", maximumRateDescription: "Very intuitive"},
-        { type: "rating", name: "visualization", title: "Please rate the visualization functionality of this platform",
-            mininumRateDescription: "No visualization", maximumRateDescription: "Provide great visualization tools!"}
+        { type: "radiogroup", name: "MLknowledge", title: "Does this platform require having machine learning background?",
+            colCount: 1, choices: [{value: 1, text:"Do not need any background knowledge"},
+            {value:2, text:"Need basic understanding"},
+            {value:3, text:"Need to have machine learning background"},
+            {value:0, text:"N/A"}]},
+        { type: "radiogroup", name: "Tune", title: "How much flexibility to tune parameters this platform give?",
+            colCount: 1, choices: [{value: 1, text:"Cannot change parameters at all"},
+            {value:2, text:"Offer some flexibility"},
+            {value:3, text:"A lot of flexibility"},
+            {value:0, text:"N/A"}]},
+        { type: "radiogroup", name: "video", title: "How's the video tutorial of this platform:?",
+            colCount: 1, choices: [{value: 1, text:"No tutorial or only bad tutorials"},
+            {value:2, text:"Can find some good video tutorials"},
+            {value:3, text:"A lot of great video tutorials"},
+            {value:0, text:"N/A"}]},
+        { type: "radiogroup", name: "document", title: "How's the documentation of this platform:?",
+            colCount: 1, choices: [{value: 1, text:"No documentation or only bad documentation"},
+            {value:2, text:"Decent documentation"},
+            {value:3, text:"A lot of great documentation"},
+            {value:0, text:"N/A"}]},
+        { type: "radiogroup", name: "UI", title: "How's the user interface of this platform:?",
+            colCount: 1, choices: [{value: 1, text:"Hard to use"},
+            {value:2, text:"Average user interface"},
+            {value:3, text:"Very intuitive"},
+            {value:0, text:"N/A"}]},
+        { type: "radiogroup", name: "visualization", title: "How's the visualization functionality of this platform:?",
+            colCount: 1, choices: [{value: 1, text:"No visualization functionality"},
+            {value:2, text:"Offer some or a little visualization functionality"},
+            {value:3, text:"Provide great visualization functionality!"},
+            {value:0, text:"N/A"}]}
         ] },
     { name: "page3",questions: [
-        { type: "multipletext", name: "speed", title: "What's your recorded speed of this platform?", colCount: 1,
-            items: [{ name: "datasize", title: "What's your datasize?" },
-                { name: "runTime", title: "How long is the total runtime of this data?" }]},
-        { type: "text", name: "accuracy", title: "Please provide us your recorded accuracy?",
+        { type: "text", name: "datasize", inputType:"number", title:"What's your datasize? (MB)", placeHolder:"100",
+             width:"20%"},
+        { type: "text", name: "runTime", inputType:"number", title:"How long is the total runtime of this data? (Seconds)",
+            placeHolder:"50", width:"20%"},
+        { type: "text", name: "accuracy", inputType:"number", title: "Please provide us your recorded accuracy?",
             placeHolder:"0.95", width:"20%"},
-        // { type: "text", name: "price", title: "Please provide us your recorded price spent (MB/dollar)?",
-        //     placeHolder:"300 (MB/per dollar)", width:"20%"},
-        { type: "radiogroup", name: "alg",
+        { type: "checkbox", name: "alg",
             title: "Check the tasks that this platform provide:",
-            colCount: 2, choices: ["classification", "clustering", "other"]}]},
+            colCount: 2, choices: ["classification", "clustering"]}]}
 ]
 };
 
@@ -49,34 +61,6 @@ $("#surveyContainer").Survey({
     model:survey,
     onComplete:sendDataToServer
 });
-
-var q = survey.getQuestionByName('name');
-q.otherText = false;
-survey.render();
-
-var q = survey.getQuestionByName('MLknowledge');
-q.rateValues = [1,2,3];
-survey.render();
-
-var q = survey.getQuestionByName('Tune');
-q.rateValues = [1,2,3];
-survey.render();
-
-var q = survey.getQuestionByName('accuracy');
-q.rateValues = [1,2,3];
-survey.render();
-var q = survey.getQuestionByName('video');
-q.rateValues = [1,2,3];
-survey.render();
-var q = survey.getQuestionByName('document');
-q.rateValues = [1,2,3];
-survey.render();
-var q = survey.getQuestionByName('UI');
-q.rateValues = [1,2,3];
-survey.render();
-var q = survey.getQuestionByName('visualization');
-q.rateValues = [1,2,3];
-survey.render();
 
 function makeid() {
     var text = "";
