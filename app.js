@@ -11,6 +11,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressLayouts);
 app.use('/public',express.static('./public'));
 var mongodb = require('./mongo');
+var nodemailer = require('nodemailer');
+var transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: '',
+        pass: ''
+    }
+});
+
 app.set('views', './views');  // Specify the folder to find templates
 app.set('view engine', 'ejs');    // Set the template engine
 app.get('/', function (req, res) {
@@ -46,7 +55,7 @@ app.post('/registerNewPlatform', function (req, res) {
 //         console.log(feedbackName);
 //         return {feedback:item, feedbackName:feedbackName};
 //     }).then(function(item){
-//         var platformFound = mongodb.queryPlatformUsingName(item.feedbackName);
+//         var platformFound = mongodb.updatePlatformUsingFeedback(item.feedbackName);
 //     return {feedback:item.feedback, platformFound: platformFound}}
 //     ).then(function (item) {
 //         console.log("platformFound");
@@ -64,14 +73,28 @@ app.post('/registerNewPlatform', function (req, res) {
 // });
 
 app.post('/approve', function (req, res) {
-    console.log(req.body);
-    console.log(mongodb.queryPlatformUsingName(req.body.name));
+    mongodb.updatePlatformUsingFeedback(req.body).then(function () {
+        res.send('The feedback has been saved!')
+    })
 });
 
 app.post('/input/:inputID', function (req, res) {
-    console.log('here');
-    var feedback = req.body;
     var feedbackID = req.params.inputID;
+    var mailOptions = {
+        from: '', // sender address
+        to: '', // list of receivers
+        subject: 'Pending feedback approval', // Subject line
+        text: "hello", // plain text body
+        html: '<a>localhost:8880/input/' + feedbackID + '</a>' // html body
+    };
+    var feedback = req.body;
+
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            return console.log(error);
+        }
+        console.log('Message %s sent: %s', info.messageId, info.response);
+    });
     mongodb.insertFeedbacktoFeedbacks(feedback, feedbackID).then(function () {
         res.send('done');
     });
@@ -79,6 +102,7 @@ app.post('/input/:inputID', function (req, res) {
 
 app.get('/input/:inputID', function (req, res) {
     var feedbackID = req.params.inputID;
+
     mongodb.queryFeedbackFromFeedbacks(feedbackID).then(function (item) {
         res.render('feedback',{
             feedback : item,
@@ -94,4 +118,9 @@ app.get('/platforms', function (req, res) {
 
 app.get('/recommendation', function (req, res) {
     res.render('recommendation');
-})
+});
+
+
+app.listen(port);
+console.log("Listening on " + port + "!");
+console.log("Go to http://localhost:" + port);
