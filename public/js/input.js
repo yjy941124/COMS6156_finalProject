@@ -32,7 +32,7 @@ var surveyJSON = { title: "Submit a new platform that you used!", pages: [
         ] },
     { name: "page3",questions: [
         { type: "multipletext", name: "speed", title: "What's your recorded speed of this platform?", colCount: 1,
-            items: [{ name: "datasize(MB)", title: "What's your datasize?" },
+            items: [{ name: "datasize", title: "What's your datasize?" },
                 { name: "runTime", title: "How long is the total runtime of this data?" }]},
         { type: "text", name: "accuracy", title: "Please provide us your recorded accuracy?",
             placeHolder:"0.95", width:"20%"},

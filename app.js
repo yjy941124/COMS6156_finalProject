@@ -11,10 +11,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressLayouts);
 app.use('/public',express.static('./public'));
 var mongodb = require('./mongo');
-
 app.set('views', './views');  // Specify the folder to find templates
 app.set('view engine', 'ejs');    // Set the template engine
-app.get('/', router.home);
+app.get('/', function (req, res) {
+    mongodb.queryAllPlatforms().then(function (item) {
+        res.render('home', {
+            platforms : item
+        })
+    })
+});
 var port = process.env.PORT || 8880;
 
 app.get('/input', function (req, res) {
@@ -49,4 +54,8 @@ app.get('/input/:inputID', function (req, res) {
         })
     })
 });
-
+app.get('/platforms', function (req, res) {
+    mongodb.queryAllPlatforms().then(function (item) {
+        res.send(item);
+    })
+});
