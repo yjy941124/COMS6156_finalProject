@@ -1,4 +1,5 @@
 function approve(feedback) {
+    alert('Feedback has been saved!');
     console.log(feedback);
     $.ajax({
         type: 'POST',
@@ -11,5 +12,5 @@ function approve(feedback) {
     });
 }
 function disapprove() {
-    console.log("disapproved")
+    alert("Feedback has been disapproved and deleted!")
 }

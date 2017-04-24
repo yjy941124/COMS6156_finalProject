@@ -69,7 +69,7 @@ function sendDataToServer(survey) {
 
     var resultAsString = JSON.stringify(survey.data);
 
-    alert(resultAsString); //send Ajax request to your web server.
+
 
     var uniqueID = makeid();
     $.ajax({
