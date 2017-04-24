@@ -5,52 +5,46 @@ Survey.defaultBootstrapCss.navigationButton = "btn btn-primary";
 Survey.Survey.cssType = "bootstrap";
 
 
-var surveyJSON = { title: "Submit a new platform that you used!", pages: [
+var surveyJSON = { title: "Submit your own feedback!", pages: [
     { name:"page1", questions: [
         { type: "dropdown", name: "name", title: "What platform do you want to rate?", isRequired: true, colCount: 0,
             choices: ["Amazon", "Microsoft", "BigML", "other"]
         }
     ]},
     { name: "page2", questions: [
-        { type: "radiogroup", name: "MLknowledge", title: "Does this platform require having machine learning background?",
+        { type: "radiogroup", isRequired: true, name: "MLknowledge", title: "Does this platform require having machine learning background?",
             colCount: 1, choices: [{value: 1, text:"Do not need any background knowledge"},
             {value:2, text:"Need basic understanding"},
-            {value:3, text:"Need to have machine learning background"},
-            {value:0, text:"N/A"}]},
-        { type: "radiogroup", name: "Tune", title: "How much flexibility to tune parameters this platform give?",
+            {value:3, text:"Need to have machine learning background"}]},
+        { type: "radiogroup",isRequired: true, name: "Tune", title: "How much flexibility to tune parameters this platform give?",
             colCount: 1, choices: [{value: 1, text:"Cannot change parameters at all"},
             {value:2, text:"Offer some flexibility"},
-            {value:3, text:"A lot of flexibility"},
-            {value:0, text:"N/A"}]},
-        { type: "radiogroup", name: "video", title: "How's the video tutorial of this platform:?",
+            {value:3, text:"A lot of flexibility"}]},
+        { type: "radiogroup", isRequired: true, name: "video", title: "How's the video tutorial of this platform:?",
             colCount: 1, choices: [{value: 1, text:"No tutorial or only bad tutorials"},
             {value:2, text:"Can find some good video tutorials"},
-            {value:3, text:"A lot of great video tutorials"},
-            {value:0, text:"N/A"}]},
-        { type: "radiogroup", name: "document", title: "How's the documentation of this platform:?",
+            {value:3, text:"A lot of great video tutorials"}]},
+        { type: "radiogroup", isRequired: true, name: "document", title: "How's the documentation of this platform:?",
             colCount: 1, choices: [{value: 1, text:"No documentation or only bad documentation"},
             {value:2, text:"Decent documentation"},
-            {value:3, text:"A lot of great documentation"},
-            {value:0, text:"N/A"}]},
-        { type: "radiogroup", name: "UI", title: "How's the user interface of this platform:?",
+            {value:3, text:"A lot of great documentation"}]},
+        { type: "radiogroup", isRequired: true, name: "UI", title: "How's the user interface of this platform:?",
             colCount: 1, choices: [{value: 1, text:"Hard to use"},
             {value:2, text:"Average user interface"},
-            {value:3, text:"Very intuitive"},
-            {value:0, text:"N/A"}]},
-        { type: "radiogroup", name: "visualization", title: "How's the visualization functionality of this platform:?",
+            {value:3, text:"Very intuitive"}]},
+        { type: "radiogroup", isRequired: true, name: "visualization", title: "How's the visualization functionality of this platform:?",
             colCount: 1, choices: [{value: 1, text:"No visualization functionality"},
             {value:2, text:"Offer some or a little visualization functionality"},
-            {value:3, text:"Provide great visualization functionality!"},
-            {value:0, text:"N/A"}]}
+            {value:3, text:"Provide great visualization functionality!"}]}
         ] },
     { name: "page3",questions: [
-        { type: "text", name: "datasize", inputType:"number", title:"What's your datasize? (MB)", placeHolder:"100",
+        { type: "text", isRequired: true, name: "datasize", inputType:"number", title:"What's your datasize? (MB)", placeHolder:"100",
              width:"20%"},
-        { type: "text", name: "runTime", inputType:"number", title:"How long is the total runtime of this data? (Seconds)",
+        { type: "text", isRequired: true, name: "runTime", inputType:"number", title:"How long is the total runtime of this data? (Seconds)",
             placeHolder:"50", width:"20%"},
-        { type: "text", name: "accuracy", inputType:"number", title: "Please provide us your recorded accuracy?",
+        { type: "text", isRequired: true, name: "accuracy", inputType:"number", title: "Please provide us your recorded accuracy?",
             placeHolder:"0.95", width:"20%"},
-        { type: "checkbox", name: "alg",
+        { type: "checkbox", sRequired: true, name: "alg",
             title: "Check the tasks that this platform provide:",
             colCount: 2, choices: ["classification", "clustering"]}]}
 ]
