@@ -15,7 +15,7 @@ var surveyJSON = {
                 type: "rating",
                 isRequired: true,
                 name: "Tune",
-                title: "How much do you value the ability to try different schema?",
+                title: "Do you want the ability to try different algorithms?",
                 visibleIf: "{MLKnowledge} == Yes"
             }
         ]
@@ -23,52 +23,58 @@ var surveyJSON = {
         {
             name: "page2", questions: [
             {
-                type: "rating", isRequired: true, name: "runTime", title: "Do you care about algorithm speed?",
-                mininumRateDescription: "Don't care", maximumRateDescription: "As fast as possible"
+                type: "radiogroup", isRequired: true, name: "runtime_accuracy",
+                title: "Which aspect is more important to you? ",
+                colCount: 4, choices: [{value:1, text:"Better runtime"}, {value:2, text:"Better accuracy"}]
             },
-            {
-                type: "rating", isRequired: true, name: "accuracy", title: "Do you care about algorithm accuracy?",
-                mininumRateDescription: "Don't care", maximumRateDescription: "As accurate as possible"
-            },
-            {
-                type: "checkbox",
-                choices: ["AngularJS", "KnockoutJS", "React"],
-                hasOther: true,
-                isRequired: true,
-                name: "mvvm",
-                title: "What MVVM framework do you use?",
-                visibleIf: "{mvvmUsing} = 'Yes'"
-            }]
+
+            // {
+            //     type: "rating", isRequired: true, name: "runTime", title: "Do you care about algorithm speed?",
+            //     mininumRateDescription: "Don't care", maximumRateDescription: "As fast as possible"
+            // },
+            // {
+            //     type: "rating", isRequired: true, name: "accuracy", title: "Do you care about algorithm accuracy?",
+            //     mininumRateDescription: "Don't care", maximumRateDescription: "As accurate as possible"
+            // },
+            ]
         },
         {
             name: "page3", questions: [
             {
-                type: "rating", isRequired: true, name: "video", title: "How important is video tutorials to you?",
-                mininumRateDescription: "Don't care", maximumRateDescription: "Very important"
+                type: "radiogroup", isRequired: true, name: "document_tutorial",
+                title: "Which aspect is more important to you? ",
+                colCount: 4, choices: [{value:1, text:"Good ducumentation"}, {value:2, text:"Good tutorial"}]
             },
             {
-                type: "rating", isRequired: true, name: "document", title: "How important is documentation to you",
-                mininumRateDescription: "Don't care", maximumRateDescription: "Very important"
-            },
+            //     type: "rating", isRequired: true, name: "video", title: "How important is tutorials to you?",
+            //     mininumRateDescription: "Don't care", maximumRateDescription: "Very important"
+            // },
+            // {
+            //     type: "rating", isRequired: true, name: "document", title: "How important is documentation to you",
+            //     mininumRateDescription: "Don't care", maximumRateDescription: "Very important"
+        }]},
+        {
+            name:"page4", title: "Are the following aspects more important than others (ex: performance, tutorial, documentation, etc)?",
+            questions:[
             {
                 type: "rating",
                 isRequired: true,
                 name: "UI",
-                title: "How important is intuitive user interface to you?",
+                title: "Intuitive User Interface",
                 mininumRateDescription: "Don't care",
-                maximumRateDescription: "Very important"
+                maximumRateDescription: "Much more important"
             },
             {
                 type: "rating",
                 isRequired: true,
                 name: "visualization",
-                title: "How important is visualization to you?",
+                title: "Data visualization",
                 mininumRateDescription: "Don't care",
-                maximumRateDescription: "Very important"
+                maximumRateDescription: "Much more important"
             }]
         },
         {
-            name: "page4", questions: [
+            name: "page5", questions: [
             {
                 name: "dataSize",
                 type: "text",
@@ -95,18 +101,18 @@ $("#surveyContainer").Survey({
 var q = survey.getQuestionByName('Tune');
 q.rateValues = [1, 2, 3];
 survey.render();
-var q = survey.getQuestionByName('runTime');
-q.rateValues = [1, 2, 3];
-survey.render();
-var q = survey.getQuestionByName('accuracy');
-q.rateValues = [1, 2, 3];
-survey.render();
-var q = survey.getQuestionByName('video');
-q.rateValues = [1, 2, 3];
-survey.render();
-var q = survey.getQuestionByName('document');
-q.rateValues = [1, 2, 3];
-survey.render();
+// var q = survey.getQuestionByName('runTime');
+// q.rateValues = [1, 2, 3];
+// survey.render();
+// var q = survey.getQuestionByName('accuracy');
+// q.rateValues = [1, 2, 3];
+// survey.render();
+// var q = survey.getQuestionByName('video');
+// q.rateValues = [1, 2, 3];
+// survey.render();
+// var q = survey.getQuestionByName('document');
+// q.rateValues = [1, 2, 3];
+// survey.render();
 var q = survey.getQuestionByName('UI');
 q.rateValues = [1, 2, 3];
 survey.render();
@@ -167,16 +173,41 @@ function makeRecommendation(survey) {
 
         var score = 0;
 
+
+
+        var tutorial_score;
+        var document_score;
+        if (surveyAnswer.document_tutorial == 1){
+            tutorial_score = 1;
+            document_score = 3;
+        }
+        else{
+            tutorial_score = 3;
+            document_score = 1;
+        }
+        // console.log(tutorial_score)
+        // console.log(document_score)
+
+        var runtime_score;
+        var accuracy_score;
+        if (surveyAnswer.runtime_accuracy == 1){
+            runtime_score = 3;
+            accuracy_score = 1;
+        }
+        else{
+            runtime_score = 1;
+            accuracy_score = 3;
+        }
         score = MLKnowledgeScore(surveyAnswer.MLKnowledge, TuneAvg, MLknowledgeAvg, parseInt(surveyAnswer.Tune)) +
-                videoScore(videoAvg, parseInt(surveyAnswer.video)) +
-                documentScore(documentAvg, parseInt(surveyAnswer.document)) +
+                videoScore(videoAvg, parseInt((tutorial_score))) +
+                documentScore(documentAvg, parseInt(document_score)) +
                 UIScore(UIAvg, parseInt(surveyAnswer.UI)) +
                 visualizationScore(visualizationAvg, parseInt(surveyAnswer.visualization));
 
         totalscores.push(score);
 
-        speedscores.push(speedScore(speedAvg, parseInt(surveyAnswer.runTime)));
-        accuracyscores.push(accuracyScore(accuracyAvg, parseInt(surveyAnswer.accuracy)));
+        speedscores.push(speedScore(speedAvg, parseInt(runtime_score)));
+        accuracyscores.push(accuracyScore(accuracyAvg, parseInt(accuracy_score)));
         var runtime = surveyAnswer.dataSize / speedAvg;
         var satisfyAlg;
 
@@ -212,9 +243,9 @@ function makeRecommendation(survey) {
     var maxScoreIdx = -1;
     var maxScore = -1;
     for (var i = 0; i < evaluation.length; i++) {
-        evaluation[i].speed = surveyAnswer.runTime * evaluation[i].speed / Math.max.apply(Math, speedscores) * 3;
-        evaluation[i].accuracy = surveyAnswer.accuracy * evaluation[i].accuracy / Math.max.apply(Math, accuracyscores) * 3;
-        evaluation[i].score = evaluation[i].score + evaluation[i].accuracy * surveyAnswer.runTime+ evaluation[i].speed * surveyAnswer.accuracy;
+        evaluation[i].speed = runtime_score * evaluation[i].speed / Math.max.apply(Math, speedscores) * 3;
+        evaluation[i].accuracy = accuracy_score * evaluation[i].accuracy / Math.max.apply(Math, accuracyscores) * 3;
+        evaluation[i].score = evaluation[i].score + evaluation[i].accuracy * runtime_score+ evaluation[i].speed * accuracy_score;
         console.log(evaluation[i].score);
         var singlePlatform = {
             x :['ML skill required','speed','accuracy','video tutorial','documentation','UI','data visualization'],
