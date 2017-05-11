@@ -103,9 +103,9 @@ app.post('/input/:inputID', function (req, res) {
 
     var mailOptions = {
 
-        from: '', // sender address
+        from: 'mlstreet6156@gmail.com', // sender address
 
-        to: '', // list of receivers
+        to: 'mlstreet6156@gmail.com', // list of receivers
 
         subject: 'Pending feedback approval', // Subject line
 
